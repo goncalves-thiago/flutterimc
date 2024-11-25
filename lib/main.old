@@ -1,0 +1,281 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+void main() => runApp(const MainApp());
+
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: "BMI Calculator",
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String gender = "male";
+  double colorMale = 1;
+  double colorFemale = 0.3;
+  int weight = 80;
+  int height = 175;
+  double imc = 0;
+
+  void calcularImc() {
+    if ((weight == 0) || (height == 0)) {
+      return;
+    } else {
+      imc = weight / (height * height);
+
+    }     
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Your Body'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "BMI Calculator",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Icon(Icons.info),
+            ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(
+                  onTap: () => setState(() {
+                    gender = "male";
+                    colorMale = 1;
+                    colorFemale = 0.3;
+                  }),
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 30, bottom: 15),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Opacity(
+                          opacity: colorMale,
+                          child: const CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage('https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3-bg.webp'),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        ),
+
+                        Opacity(
+                          opacity: colorMale,
+                          child: const Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text("Male"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                ),
+                ),
+
+                GestureDetector(
+                  onTap: () => setState(() {
+                    gender = "female";
+                    colorFemale = 1;
+                    colorMale = 0.3;
+                  }),
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 30, bottom: 15),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Opacity(
+                          opacity: colorFemale,
+                          child: const CircleAvatar(
+                            radius: 60,
+                            backgroundImage: NetworkImage('https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava2-bg.webp'),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        ),
+
+                        Opacity(
+                          opacity: colorFemale,
+                          child: const Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10),
+                              child: Text("Female"),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                ),
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Row(children: [
+                        Text("Your weight "),
+                        Text("(kg)", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],),
+                       SizedBox(
+                        width: 45,
+                        child: TextField(
+                          style: const TextStyle(
+                            fontSize: 25,
+                          ),
+                          decoration:  const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '80',
+                            hintStyle: TextStyle(
+                              fontSize: 25,
+                            )
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(3),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              weight = int.parse(value);
+                            });                            
+                          },                          
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Row(children: [
+                        Text("Your height "),
+                        Text("(cm)", style: TextStyle(fontWeight: FontWeight.bold),),
+                      ],),
+                      
+                      SizedBox(
+                        width: 45,
+                        child: TextField(
+                          style: const TextStyle(
+                            fontSize: 25,
+                          ),
+                          decoration:  const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '175',
+                            hintStyle: TextStyle(
+                              fontSize: 25,
+                            )
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(3),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              height = int.parse(value);
+                            });                            
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () => {
+                      calcularImc,
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => _resultPage()),
+                      ),
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      minimumSize: const Size(290, 50)
+                    ),
+                    child: const Text("Calculate your BMI"),
+                  ),
+                ],
+              ),
+            ),
+          ]
+        ),
+      )
+    );
+  }
+}
+
+class _resultPage extends State<HomePage> {
+
+@override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Your Body'),
+      ),
+      body: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Your BMI",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
